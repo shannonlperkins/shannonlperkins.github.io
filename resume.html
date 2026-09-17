@@ -10,10 +10,10 @@
 </head>
 <body>
 <div class="wrap">
-<div class="topbar"><a href="index.html">← Portfolio</a><button class="print" onclick="window.print()">Print / Save as PDF</button></div>
+<div class="topbar"><a href="index.html">← Portfolio</a><button class="print" onclick="trackEvent('resume_print_click');window.print()">Print / Save as PDF</button></div>
 <h1>SHANNON PERKINS, MBA</h1>
 <div class="tagline">HEALTHCARE OPERATIONS | BUSINESS OPERATIONS | STRATEGY & IMPLEMENTATION</div>
-<div class="contact">Omaha, NE | (260) 229-6150 | <a href="mailto:shannon.perkins.mba@gmail.com">shannon.perkins.mba@gmail.com</a> | <a href="https://www.linkedin.com/in/shannonlperkins" target="_blank">LinkedIn</a> | <a href="https://github.com/shannonlperkins" target="_blank">GitHub</a></div>
+<div class="contact">Omaha, NE | (260) 229-6150 | <a href="mailto:shannon.perkins.mba@gmail.com" onclick="trackEvent('email_click')">shannon.perkins.mba@gmail.com</a> | <a href="https://www.linkedin.com/in/shannonlperkins" target="_blank" onclick="trackEvent('linkedin_click')">LinkedIn</a> | <a href="https://github.com/shannonlperkins" target="_blank" onclick="trackEvent('github_click')">GitHub</a></div>
 <h2>PROFESSIONAL SUMMARY</h2>
 <p class="summary">Healthcare and business operations leader, U.S. Air Force veteran, and MBA with 10+ years of progressive experience across ambulatory operations, multi-site management, performance improvement, implementation, and wellness. Leads complex cross-functional work from problem definition through execution, using data, KPIs, capacity planning, process redesign, and stakeholder alignment to improve access, financial performance, workforce effectiveness, quality, and patient experience. Leadership scope has included 17 providers, 50+ employees, a patient panel of approximately 16,700, four-site practice management, rural clinic launch, service-line development, and independent business ownership.</p>
 <h2>CORE CAPABILITIES</h2>
@@ -32,5 +32,14 @@
 <div class="recognition"><p>FY2026 CommonSpirit Health Clinical Excellence Vision Award — Highest Performer in Patient Experience</p><p>FY2026 Physician Enterprise Primary Care Quality & Value Award — Hypertension and A1c Control</p><p>United States Air Force — Airman of the Quarter (2005)</p></div>
 <p class="note">Use the “Print / Save as PDF” button to create a PDF copy directly from your browser.</p>
 </div>
+<script>
+const PORTFOLIO_TRACKER_URL='https://script.google.com/macros/s/AKfycbyxBk-aW1ZDRNELgeUcKwme2X4msBssfkkkNZK7HOEYwvsphQdTrFDDm9BRQHoHcTvw8w/exec';
+const ATTRIBUTION_KEYS=['src','company','role','campaign'];
+function loadAttribution(){const current=new URLSearchParams(window.location.search);const attr={};ATTRIBUTION_KEYS.forEach(k=>{if(current.get(k))attr[k]=current.get(k)});if(Object.keys(attr).length){sessionStorage.setItem('portfolioAttribution',JSON.stringify(attr));return attr;}try{const saved=JSON.parse(sessionStorage.getItem('portfolioAttribution')||'{}');if(Object.keys(saved).length){const u=new URL(window.location.href);ATTRIBUTION_KEYS.forEach(k=>{if(saved[k]&&!u.searchParams.get(k))u.searchParams.set(k,saved[k])});history.replaceState({},'',u.pathname+u.search+u.hash);return saved;}}catch(e){}return {};}
+const PORTFOLIO_ATTRIBUTION=loadAttribution();
+function decorateInternalLinks(){document.querySelectorAll('a[href]').forEach(a=>{const raw=a.getAttribute('href');if(!raw||raw.startsWith('#')||raw.startsWith('mailto:')||raw.startsWith('tel:'))return;const u=new URL(raw,window.location.href);if(u.origin!==window.location.origin)return;ATTRIBUTION_KEYS.forEach(k=>{if(PORTFOLIO_ATTRIBUTION[k])u.searchParams.set(k,PORTFOLIO_ATTRIBUTION[k])});a.href=u.pathname+u.search+u.hash;});}
+function trackEvent(eventName){const params=new URLSearchParams({event:eventName,page:window.location.href,referrer:document.referrer||'Direct / unavailable',ua:navigator.userAgent||'Unavailable'});fetch(PORTFOLIO_TRACKER_URL+'?'+params.toString()+'&_='+Date.now(),{mode:'no-cors',keepalive:true,cache:'no-store'}).catch(()=>{});}
+decorateInternalLinks();
+</script>
 </body>
 </html>
