@@ -25,7 +25,12 @@
 <footer><div class="container">© 2026 Shannon Perkins · Healthcare Operations & Business Strategy</div></footer>
 <script>
 const PORTFOLIO_TRACKER_URL='https://script.google.com/macros/s/AKfycbyxBk-aW1ZDRNELgeUcKwme2X4msBssfkkkNZK7HOEYwvsphQdTrFDDm9BRQHoHcTvw8w/exec';
+const ATTRIBUTION_KEYS=['src','company','role','campaign'];
+function loadAttribution(){const current=new URLSearchParams(window.location.search);const attr={};ATTRIBUTION_KEYS.forEach(k=>{if(current.get(k))attr[k]=current.get(k)});if(Object.keys(attr).length){sessionStorage.setItem('portfolioAttribution',JSON.stringify(attr));return attr;}try{const saved=JSON.parse(sessionStorage.getItem('portfolioAttribution')||'{}');if(Object.keys(saved).length){const u=new URL(window.location.href);ATTRIBUTION_KEYS.forEach(k=>{if(saved[k]&&!u.searchParams.get(k))u.searchParams.set(k,saved[k])});history.replaceState({},'',u.pathname+u.search+u.hash);return saved;}}catch(e){}return {};}
+const PORTFOLIO_ATTRIBUTION=loadAttribution();
+function decorateInternalLinks(){document.querySelectorAll('a[href]').forEach(a=>{const raw=a.getAttribute('href');if(!raw||raw.startsWith('#')||raw.startsWith('mailto:')||raw.startsWith('tel:'))return;const u=new URL(raw,window.location.href);if(u.origin!==window.location.origin)return;ATTRIBUTION_KEYS.forEach(k=>{if(PORTFOLIO_ATTRIBUTION[k])u.searchParams.set(k,PORTFOLIO_ATTRIBUTION[k])});a.href=u.pathname+u.search+u.hash;});}
 function trackEvent(eventName){const params=new URLSearchParams({event:eventName,page:window.location.href,referrer:document.referrer||'Direct / unavailable',ua:navigator.userAgent||'Unavailable'});fetch(PORTFOLIO_TRACKER_URL+'?'+params.toString()+'&_='+Date.now(),{mode:'no-cors',keepalive:true,cache:'no-store'}).catch(()=>{});}
+decorateInternalLinks();
 </script>
 </body>
 </html>
