@@ -47,6 +47,7 @@ const PORTFOLIO_ATTRIBUTION=loadAttribution();
 function decorateInternalLinks(){document.querySelectorAll('a[href]').forEach(a=>{const raw=a.getAttribute('href');if(!raw||raw.startsWith('#')||raw.startsWith('mailto:')||raw.startsWith('tel:'))return;const u=new URL(raw,window.location.href);if(u.origin!==window.location.origin)return;ATTRIBUTION_KEYS.forEach(k=>{if(PORTFOLIO_ATTRIBUTION[k])u.searchParams.set(k,PORTFOLIO_ATTRIBUTION[k])});a.href=u.pathname+u.search+u.hash;});}
 function trackEvent(eventName){const params=new URLSearchParams({event:eventName,page:window.location.href,referrer:document.referrer||'Direct / unavailable',ua:navigator.userAgent||'Unavailable'});fetch(PORTFOLIO_TRACKER_URL+'?'+params.toString()+'&_='+Date.now(),{mode:'no-cors',keepalive:true,cache:'no-store'}).catch(()=>{});}
 decorateInternalLinks();
+trackEvent('writing_sample_view');
 </script>
 </body>
 </html>
